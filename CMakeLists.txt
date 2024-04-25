@@ -3,6 +3,8 @@ PROJECT(uvc_app)
 
 include_directories(uvc)
 
+option(ENABLE_CAMERA_UVC "Enable camera uvc" OFF)
+
 set(LIB_SOURCE
     uvc/uvc-gadget.c
     uvc/uvc_video.cpp
@@ -24,6 +26,7 @@ set(SOURCE
 ADD_EXECUTABLE(uvc_app ${SOURCE})
 target_link_libraries(uvc_app pthread drm rockchip_mpp)
 
+if(${ENABLE_CAMERA_UVC})
 set(CAMERA_SOURCE
     camera_uvc.c
     ${LIB_SOURCE}
@@ -31,6 +34,7 @@ set(CAMERA_SOURCE
 
 ADD_EXECUTABLE(camera_uvc ${CAMERA_SOURCE})
 target_link_libraries(camera_uvc rkisp rkisp_api pthread drm rockchip_mpp)
+endif()
 
 install(TARGETS rkuvc DESTINATION lib)
 install(DIRECTORY ./uvc DESTINATION include
@@ -43,4 +47,6 @@ install(DIRECTORY . DESTINATION bin
         GROUP_READ GROUP_WRITE GROUP_EXECUTE
         WORLD_READ WORLD_WRITE WORLD_EXECUTE)
 
+if(${ENABLE_CAMERA_UVC})
 install(TARGETS camera_uvc DESTINATION bin)
+endif()
